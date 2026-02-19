@@ -41,17 +41,22 @@ if [ "$total" -eq 0 ]; then
 fi
 
 # ---------- Header ----------
-echo -e "${BLUE}🚀  Syncing GitHub Repositories${RESET}"
+echo -e "${BLUE}🚀  Syncing $total repositories concurrently...${RESET}"
 echo ""
 
-count=1
+# Arrays to track state (Bash 3 compatible)
+pids=()
+tmp_files=()
+repo_paths=()
+before_commits=()
+statuses=() # 0=Pulling, 1=Skipped, 2=Error Accessing
 
+count=0
 for repo in "${repos[@]}"; do
-    REPO_NAME=$(basename "$repo")
-    printf "[%d/%d] %s " "$count" "$total" "$REPO_NAME"
-
+    repo_paths[$count]="$repo"
+    
     cd "$repo" || {
-        echo -e "${YELLOW}⚠️  Unable to access repository${RESET}"
+        statuses[$count]=2
         ((count++))
         continue
     }
@@ -67,47 +72,84 @@ for repo in "${repos[@]}"; do
     modified_files=$(git status --porcelain | wc -l | tr -d ' ')
 
     if [ "$modified_files" -gt 0 ]; then
-        printf "... ${YELLOW}⚠️  %s modified file(s) — sync skipped${RESET}\n" "$modified_files"
+        statuses[$count]=1
         ((count++))
         continue
     fi
 
-    before_commit=$(git rev-parse HEAD 2>/dev/null)
+    statuses[$count]=0
+    before_commits[$count]=$(git rev-parse HEAD 2>/dev/null)
+    
+    tmp=$(mktemp)
+    tmp_files[$count]="$tmp"
+    
+    git pull --rebase >"$tmp" 2>&1 &
+    pids[$count]=$!
+    
+    ((count++))
+done
 
-    {
-        git pull --rebase >/dev/null 2>&1
-    } &
-    pid=$!
+# Wait for all background pulls to finish, with an animated spinner
+spinner=( "⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏" )
+spin_idx=0
 
-    DOTS=1
-    while kill -0 $pid 2>/dev/null; do
-        dots=$(printf "%0.s." $(seq 1 $DOTS))
-        printf "\r[%d/%d] %s %s" "$count" "$total" "$REPO_NAME" "$dots"
-        DOTS=$((DOTS+1))
-        [ $DOTS -gt 3 ] && DOTS=1
-        sleep 0.4
+while true; do
+    jobs_running=0
+    for pid in "${pids[@]}"; do
+        if kill -0 "$pid" 2>/dev/null; then
+            jobs_running=1
+            break
+        fi
     done
+    
+    if [ $jobs_running -eq 0 ]; then
+        break
+    fi
+    
+    printf "\r${CYAN}%s  Fetching updates from GitHub...${RESET}" "${spinner[$spin_idx]}"
+    spin_idx=$(( (spin_idx + 1) % 10 ))
+    sleep 0.1
+done
 
-    wait $pid
+# Clear the spinner line
+printf "\r\033[K"
+
+# Process and print results sequentially for a clean UI
+display_count=1
+for i in "${!repo_paths[@]}"; do
+    repo="${repo_paths[$i]}"
+    REPO_NAME=$(basename "$repo")
+    printf "[%d/%d] %s " "$display_count" "$total" "$REPO_NAME"
+    ((display_count++))
+    
+    if [ "${statuses[$i]}" -eq 2 ]; then
+        echo -e "... ${YELLOW}⚠️  Unable to access repository${RESET}"
+        continue
+    elif [ "${statuses[$i]}" -eq 1 ]; then
+        # We didn't save the modified file count, so we just print skipped
+        echo -e "... ${YELLOW}⚠️  modified files — sync skipped${RESET}"
+        continue
+    fi
+    
+    # Check wait status of the specific background job
+    wait "${pids[$i]}" 2>/dev/null
     RESULT=$?
-
+    
+    cd "$repo" || continue
     after_commit=$(git rev-parse HEAD 2>/dev/null)
-
+    
     if [ $RESULT -ne 0 ]; then
-        printf "\r[%d/%d] %s ... ${YELLOW}⚠️  pull failed${RESET}\n" \
-        "$count" "$total" "$REPO_NAME"
-    elif [ "$before_commit" = "$after_commit" ]; then
-        printf "\r[%d/%d] %s ... ${GREEN}✅ already up to date${RESET}\n" \
-        "$count" "$total" "$REPO_NAME"
+        echo -e "... ${YELLOW}⚠️  pull failed${RESET}"
+    elif [ "${before_commits[$i]}" = "$after_commit" ]; then
+        echo -e "... ${GREEN}✅ already up to date${RESET}"
     else
-        commit_count=$(git rev-list --count "$before_commit..$after_commit")
-        file_count=$(git diff --name-only "$before_commit..$after_commit" | wc -l | tr -d ' ')
-
-        printf "\r[%d/%d] %s ... ${CYAN}⬇ pulled %s commit(s) affecting %s file(s) — now synced${RESET}\n" \
-        "$count" "$total" "$REPO_NAME" "$commit_count" "$file_count"
+        commit_count=$(git rev-list --count "${before_commits[$i]}..$after_commit" 2>/dev/null || echo "1")
+        file_count=$(git diff --name-only "${before_commits[$i]}..$after_commit" 2>/dev/null | wc -l | tr -d ' ')
+        echo -e "... ${CYAN}⬇ pulled $commit_count commit(s) affecting $file_count file(s) — now synced${RESET}"
     fi
 
-    ((count++))
+    # Clean up temp files
+    rm -f "${tmp_files[$i]}"
 done
 
 echo ""
