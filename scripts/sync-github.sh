@@ -4,12 +4,14 @@
 # Modern GitHub Repository Sync Utility
 # ==========================================
 
-BASE_DIRS=(
+DEFAULT_DIRS=(
     "$HOME/GitHub"
     "$HOME/Scripts"
 )
 
-GITHUB_USERNAME="sahilkamalny"
+BASE_DIRS=("${@:-${DEFAULT_DIRS[@]}}")
+
+OS="$(uname -s)"
 
 # ---------- Colors ----------
 GREEN="\033[1;32m"
@@ -37,7 +39,7 @@ if [ "$total" -eq 0 ]; then
 fi
 
 # ---------- Header ----------
-echo -e "${BLUE}🚀  Syncing GitHub Repositories [${GITHUB_USERNAME}]${RESET}"
+echo -e "${BLUE}🚀  Syncing GitHub Repositories${RESET}"
 echo ""
 
 count=1
@@ -55,7 +57,7 @@ for repo in "${repos[@]}"; do
     # Convert HTTPS → SSH if needed
     current_url=$(git remote get-url origin 2>/dev/null)
     if [[ "$current_url" == https://github.com/* ]]; then
-        ssh_url="git@github.com:${GITHUB_USERNAME}/${REPO_NAME}.git"
+        ssh_url=$(echo "$current_url" | sed 's|https://github.com/|git@github.com:|')
         git remote set-url origin "$ssh_url"
     fi
 
@@ -108,3 +110,11 @@ done
 
 echo ""
 echo -e "${BLUE}🎉  Repository sync complete.${RESET}"
+
+if [[ "$OS" == "Darwin" ]]; then
+    osascript -e 'display notification "Repository sync complete." with title "Sync Repos"'
+elif [[ "$OS" == "Linux" ]]; then
+    if command -v notify-send >/dev/null; then
+        notify-send "Sync Repos" "Repository sync complete."
+    fi
+fi
