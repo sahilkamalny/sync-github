@@ -23,10 +23,12 @@ This utility allows you to seamlessly detect and clone repositories you own on G
 
 1. **Install `gh`:** Follow the [official installation instructions](https://cli.github.com/manual/installation) for your OS (e.g. `brew install gh` on macOS, or `sudo apt install gh` on Debian/Ubuntu).
 2. **Authenticate:** Open your terminal and run the following command to securely link your machine:
+   
    ```bash
    gh auth login
    ```
-3. Follow the interactive prompts to log in via your web browser. Once finished, this utility will automatically discover your account on its next run and offer a GUI or Terminal prompt to clone any missing repositories!
+   
+4. Follow the interactive prompts to log in via your web browser. Once finished, this utility will automatically discover your account on its next run and offer a GUI or Terminal prompt to clone any missing repositories!
 
 ### SSH Configuration Required
 Because this utility dynamically upgrades all remotes to secure SSH connections (as noted in Features), **you must have a GitHub SSH Key configured on your machine.**
