@@ -326,5 +326,5 @@ elif [[ "$OS" == "Linux" ]]; then
     echo -e "   or by launching it from your Linux application menu."
 fi
 echo ""
-echo -e "   \033[3mBuilt with care by Sahil Kamal for the GitHub community.\033[0m"
+echo -e "\033[3mBuilt with care by Sahil Kamal for the GitHub community.\033[0m"
 echo ""
