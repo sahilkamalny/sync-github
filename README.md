@@ -7,11 +7,10 @@
 A highly polished, reliable, and OS-aware shell utility to effortlessly synchronize multiple local GitHub repositories at once.
 
 ## Features
-- **Parallel Fetching:** Iterates and pulls repositories concurrently.
-- **Dynamic Configuration:** Automatically rewrites HTTPS remotes to SSH to circumvent authentication limits and bypass hardcoded user parameters.
-- **Fail-safes:** Detects and skips synchronization for repositories with uncommitted changes to prevent overwriting your work.
-- **Native Notifications:** Displays OS-level graphical notifications upon completion (macOS and Linux).
-- **Universal Installer:** Ships with an automated, one-step installer.
+- **Parallel Fetching:** Iterates and pulls repositories concurrently, falling back gracefully if errors occur.
+- **Fail-safe Rebase Protections:** Intelligently runs `git rebase --abort` on background tasks that fail due to merge conflicts or network errors, protecting your repository from being stuck in a dirty state.
+- **Dynamic System Integrations:** Native Notification alerts, AppleScript/Bash hybrid application wrappers on macOS, and `.desktop` launchers on Linux Desktop.
+- **Interactive Configuration Menus:** Ships with a stateful GUI menu on both macOS and Linux that allows infinite folder selection, multi-directory tracking, and individual folder removal via checkbox lists.
 
 ## Requirements
 - `git`
@@ -27,11 +26,9 @@ If you do not have an SSH key set up for GitHub, follow GitHub's official univer
 ## Installation
 **For macOS (One-Click):**
 Open this folder in your file manager and double-click `macOS-Install.command`.
-*(To remove it later, simply double-click `macOS-Uninstall.command`)*
 
 **For Linux Desktop (One-Click):**
 Open this folder in your file manager and double-click `Linux-Install.sh`.
-*(To remove it later, simply double-click `Linux-Uninstall.sh`)*
 
 **Terminal Users (All OS):**
 Ensure you are in the root directory and run:
@@ -50,10 +47,18 @@ Ensure you are in the root directory and run:
 By default, the script looks for repositories in `~/GitHub`, `~/Projects`, `~/Scripts`, and `~/Repositories`.
 
 **Custom Paths & Configuration:**
-During the 1-click installation sequence, a native desktop popup UI will prompt you to enter any custom repository folder paths. These paths will be securely saved into a configuration file. 
+During the 1-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select infinite directories via your OS file-picker, visually seeing what is currently being tracked. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
 
-Alternatively, you can skip the installer and override configurations on the fly by trailing the parent directories via CLI arguments:
+Alternatively, you can override configurations on the fly by trailing the parent directories via CLI arguments:
 
 ```bash
 github-sync ~/CustomClientCode ~/SecondaryBackupDrive
 ```
+
+## Uninstallation
+
+To completely remove the CLI link, desktop applications, and wipe your repository configurations (`~/.config/github-sync`), you can utilize the provided centralized teardown scripts exactly how you installed the application:
+
+1. **macOS:** Double-click `macOS-Uninstall.command`
+2. **Linux:** Double-click `Linux-Uninstall.sh`
+3. **Terminal:** `./scripts/uninstall.sh`
