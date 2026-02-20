@@ -253,7 +253,7 @@ if [[ "$OS" == "Darwin" ]]; then
     APP_DIR="$REPO_DIR/$APP_NAME"
     
     mkdir -p "$APP_DIR/Contents/Resources"
-    cat << 'EOF' > "$APP_DIR/Contents/Resources/run.command"
+    cat << 'EOF' > "$APP_DIR/Contents/Resources/run.sh"
 #!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$SCRIPT_DIR/../../.." && pwd)"
@@ -263,18 +263,13 @@ echo ""
 read -p "   Press [Enter] to exit..."
 
 WIN_ID=$(osascript -e 'tell application "Terminal" to get id of front window' 2>/dev/null)
-DISABLE_BASH=0
-DISABLE_ZSH=0
-[ ! -e ~/.bash_sessions_disable ] && touch ~/.bash_sessions_disable && DISABLE_BASH=1
-[ ! -e ~/.zsh_sessions_disable ] && touch ~/.zsh_sessions_disable && DISABLE_ZSH=1
-
 if [ -n "$WIN_ID" ]; then
-    nohup bash -c "sleep 0.5; [ $DISABLE_BASH -eq 1 ] && rm -f ~/.bash_sessions_disable; [ $DISABLE_ZSH -eq 1 ] && rm -f ~/.zsh_sessions_disable; osascript -e 'tell application \"Terminal\" to close (every window whose id is $WIN_ID)'" >/dev/null 2>&1 </dev/null &
+    nohup bash -c "sleep 0.1; osascript -e 'tell application \"Terminal\" to close (every window whose id is $WIN_ID)'" >/dev/null 2>&1 </dev/null &
 fi
 exit 0
 EOF
-    chmod +x "$APP_DIR/Contents/Resources/run.command"
-    osacompile -o "$APP_DIR" -e "do shell script \"open \\\"$APP_DIR/Contents/Resources/run.command\\\"\"" >/dev/null 2>&1
+    chmod +x "$APP_DIR/Contents/Resources/run.sh"
+    osacompile -o "$APP_DIR" -e "do script \"exec bash \\\"$APP_DIR/Contents/Resources/run.sh\\\"\"" >/dev/null 2>&1
     
     if [ -f "/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns" ]; then
         cp "/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns" "$APP_DIR/Contents/Resources/applet.icns"
