@@ -183,20 +183,33 @@ echo -e "${BLUE}🎉  Repository sync complete.${RESET}\n"
 # ---------- Clone Missing Repositories ----------
 if command -v gh >/dev/null 2>&1; then
     if gh auth status >/dev/null 2>&1; then
-        echo -e "${CYAN}🔍 Checking for missing GitHub repositories...${RESET}"
+        clone_choice="y"
+        if [ -t 0 ]; then
+            echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+            echo -e "${CYAN}  🔍 Missing Repositories${RESET}"
+            echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+            printf "\n    Would you like to check for and clone missing remote repositories? [y/N]: "
+            read -r clone_choice
+            echo ""
+        fi
         
-        # Construct an array of local remote URLs (normalized)
+        if [[ ! "$clone_choice" =~ ^[Yy]$ ]]; then
+            echo -e "    ${YELLOW}ℹ️  Skipped cloning missing repositories.${RESET}\n"
+        else
+            echo -e "    ${CYAN}Fetching your repository list from GitHub...${RESET}"
+        # Construct an array of local remote URLs (normalized/lowercase)
         local_urls=()
         for repo_dir in "${repos[@]}"; do
             if [ -d "$repo_dir/.git" ]; then
                 url=$(cd "$repo_dir" && git remote get-url origin 2>/dev/null)
                 if [ -n "$url" ]; then
-                    # Convert HTTPS to SSH for comparison
-                    if [[ "$url" == https://github.com/* ]]; then
-                        url=$(echo "$url" | sed 's|https://github.com/|git@github.com:|')
-                    fi
-                    # Remove .git suffix
+                    # Standardize all remotes to git@github.com: format for consistent string matching
+                    url=$(echo "$url" | sed -e 's|https://github.com/|git@github.com:|' -e 's|ssh://git@github.com/|git@github.com:|')
+                    
+                    # Remove .git suffix and enforce lowercase
                     url="${url%.git}"
+                    url=$(echo "$url" | tr '[:upper:]' '[:lower:]')
+                    
                     local_urls+=("$url")
                 fi
             fi
@@ -212,6 +225,7 @@ if command -v gh >/dev/null 2>&1; then
             [ -z "$name_with_owner" ] && continue
             
             check_url="${ssh_url%.git}"
+            check_url=$(echo "$check_url" | tr '[:upper:]' '[:lower:]')
             
             found=0
             for l_url in "${local_urls[@]}"; do
@@ -397,6 +411,7 @@ if command -v gh >/dev/null 2>&1; then
             fi
         else
             echo -e "${GREEN}✅ All your remote repositories are already cloned locally.${RESET}\n"
+        fi
         fi
     fi
 fi

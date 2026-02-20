@@ -11,10 +11,22 @@ Reliable, OS-aware shell utility to effortlessly synchronize multiple local GitH
 - **Fail-safe Rebase Protections:** Runs `git rebase --abort` on background tasks that fail due to merge conflicts or network errors, protecting your repository from being stuck in a dirty state.
 - **Dynamic System Integrations:** Native Notification alerts, AppleScript/Bash hybrid application wrappers on macOS, and `.desktop` launchers on Linux Desktop.
 - **Interactive Configuration Menus:** Ships with a stateful GUI menu on both macOS and Linux that allows infinite folder selection, multi-directory tracking, and individual folder removal via checkbox lists.
+- **Auto SSH Upgrades:** Dynamically detects and upgrades standard `https://` remotes to `git@github.com:` SSH remotes, bypassing strict token authentication limits and avoiding hardcoded usernames.
+- **Clean, Animated UI:** Provides a beautiful, easy-to-read progress spinner and sequentially resolves concurrent background jobs for a premium terminal experience.
 
 ## Requirements
 - `git`
 - `bash`
+
+### Optional: Cloning Missing Repositories
+This utility allows you to seamlessly detect and clone repositories you own on GitHub that are missing from your local machine. Because this action taps into your GitHub account directly, it strictly requires the official **GitHub CLI (`gh`)** to be installed and authenticated.
+
+1. **Install `gh`:** Follow the [official installation instructions](https://cli.github.com/manual/installation) for your OS (e.g. `brew install gh` on macOS, or `sudo apt install gh` on Debian/Ubuntu).
+2. **Authenticate:** Open your terminal and run the following command to securely link your machine:
+   ```bash
+   gh auth login
+   ```
+3. Follow the interactive prompts to log in via your web browser. Once finished, this utility will automatically discover your account on its next run and offer a GUI or Terminal prompt to clone any missing repositories!
 
 ### SSH Configuration Required
 Because this utility dynamically upgrades standard `https://` remotes to `git@github.com:` SSH remotes (bypassing strict authentication limits and hardcoded usernames), **you must have a GitHub SSH Key configured on your machine.**
