@@ -24,10 +24,10 @@ If you do not have an SSH key set up for GitHub, follow GitHub's official univer
 2. [Adding the SSH key to your GitHub account](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account)
 
 ## Installation
-**For macOS (One-Click):**
+**For macOS (Double-Click):**
 Open this folder in your file manager and double-click `macOS-Install.command`.
 
-**For Linux Desktop (One-Click):**
+**For Linux Desktop (Double-Click):**
 Open this folder in your file manager and double-click `Linux-Install.sh`.
 
 **Terminal Users (All OS):**
@@ -47,7 +47,7 @@ Ensure you are in the root directory and run:
 By default, the script looks for repositories in `~/GitHub`, `~/Projects`, `~/Scripts`, and `~/Repositories`.
 
 **Custom Paths & Configuration:**
-During the 1-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select multiple directories via your OS file-picker, visually seeing what is currently being tracked. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
+During the double-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select multiple directories via your OS file-picker, visually seeing what is currently being tracked. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
 
 Alternatively, you can override configurations on the fly by trailing the parent directories via CLI arguments:
 
