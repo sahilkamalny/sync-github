@@ -47,7 +47,7 @@ Ensure you are in the root directory and run:
 By default, the script looks for repositories in `~/GitHub`, `~/Projects`, `~/Scripts`, and `~/Repositories`.
 
 **Custom Paths & Configuration:**
-During the 1-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select infinite directories via your OS file-picker, visually seeing what is currently being tracked. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
+During the 1-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select multiple directories via your OS file-picker, visually seeing what is currently being tracked. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
 
 Alternatively, you can override configurations on the fly by trailing the parent directories via CLI arguments:
 
