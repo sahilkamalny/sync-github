@@ -11,8 +11,9 @@ CONFIG_FILE="$CONFIG_DIR/config"
 
 DEFAULT_DIRS=(
     "$HOME/GitHub"
-    "$HOME/Scripts"
     "$HOME/Projects"
+    "$HOME/Scripts"
+    "$HOME/Repositories"
 )
 
 CONFIG_DIRS=()

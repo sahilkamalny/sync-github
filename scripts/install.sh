@@ -25,87 +25,113 @@ CONFIG_FILE="$CONFIG_DIR/config"
 mkdir -p "$CONFIG_DIR"
 
 echo -e "\033[1;36mConfigure Repository Paths\033[0m"
-echo "By default, GitHub Sync looks in ~/GitHub, ~/Scripts, and ~/Projects."
+echo "By default, GitHub Sync looks in ~/GitHub, ~/Projects, ~/Scripts, and ~/Repositories."
 echo "You can specify exactly where your repositories are located."
 echo ""
 
 USER_PATHS=""
 
 if [[ "$OS" == "Darwin" ]]; then
-    # macOS native AppleScript folder picker loop
-    while true; do
-        selected=$(osascript -e '
+    # macOS native AppleScript stateful menu loop
+    USER_PATHS=$(osascript -e '
+        set userPaths to {}
+        repeat
+            set pathString to ""
+            repeat with p in userPaths
+                set pathString to pathString & "• " & p & return
+            end repeat
+            if pathString is "" then set pathString to "(None selected, will use defaults: ~/GitHub, ~/Projects, ~/Scripts, ~/Repositories)"
+            
             try
-                set chosen to choose folder with prompt "Select a repository folder (or click Cancel to use defaults):" default location (path to home folder)
-                return POSIX path of chosen
+                set theResult to display dialog "Current Repositories:" & return & return & pathString buttons {"Done", "Clear All", "Add Folder..."} default button "Add Folder..." with title "GitHub Sync Configuration"
+                
+                if button returned of theResult is "Add Folder..." then
+                    set newFolder to choose folder with prompt "Select a repository folder:" default location (path to home folder)
+                    set end of userPaths to POSIX path of newFolder
+                else if button returned of theResult is "Clear All" then
+                    set userPaths to {}
+                else if button returned of theResult is "Done" then
+                    exit repeat
+                end if
             on error
-                return ""
+                -- User clicked Cancel or pressed Escape
+                exit repeat
             end try
-        ' 2>/dev/null)
+        end repeat
         
-        if [ -n "$selected" ]; then
-            if [ -z "$USER_PATHS" ]; then
-                USER_PATHS="$selected"
-            else
-                USER_PATHS="$USER_PATHS,$selected"
-            fi
-            
-            add_more=$(osascript -e '
-                try
-                    set response to display dialog "Added:\n'"$selected"'\n\nWould you like to add another repository folder?" buttons {"No", "Yes"} default button "Yes" with title "GitHub Sync Configuration"
-                    return button returned of response
-                on error
-                    return "No"
-                end try
-            ' 2>/dev/null)
-            
-            if [ "$add_more" != "Yes" ]; then
-                break
-            fi
+        set outString to ""
+        repeat with p in userPaths
+            set outString to outString & p & ","
+        end repeat
+        if (length of outString) > 0 then
+            return text 1 thru -2 of outString
         else
-            break
-        fi
-    done
+            return ""
+        end if
+    ' 2>/dev/null || echo "")
 elif [[ "$OS" == "Linux" ]]; then
-    # Linux GUI native folder picker loop
+    # Linux GUI native stateful menu loop
+    user_paths_array=()
     if command -v zenity >/dev/null; then
         while true; do
-            selected=$(zenity --file-selection --directory --title="Select a repo folder (Cancel for defaults)" 2>/dev/null)
-            if [ -n "$selected" ]; then
-                if [ -z "$USER_PATHS" ]; then
-                    USER_PATHS="$selected"
-                else
-                    USER_PATHS="$USER_PATHS,$selected"
-                fi
-                
-                zenity --question --title="GitHub Sync Configuration" --text="Added:\n$selected\n\nWould you like to add another repository folder?" 2>/dev/null
-                if [ $? -ne 0 ]; then
-                    break
+            path_string=""
+            for p in "${user_paths_array[@]}"; do
+                path_string+="• $p\n"
+            done
+            if [ -z "$path_string" ]; then
+                path_string="(None selected, will use defaults)"
+            fi
+            
+            action=$(zenity --question --title="GitHub Sync Configuration" --text="<b>Current Repositories:</b>\n\n$path_string" --ok-label="Done" --cancel-label="Add Folder..." --extra-button="Clear All" 2>/dev/null)
+            ret=$?
+            
+            if [ "$action" = "Clear All" ]; then
+                user_paths_array=()
+            elif [ $ret -eq 0 ]; then
+                break # Done
+            elif [ $ret -eq 1 ]; then
+                selected=$(zenity --file-selection --directory --title="Select a repo folder" 2>/dev/null)
+                if [ -n "$selected" ]; then
+                    user_paths_array+=("$selected")
                 fi
             else
-                break
+                break # Window closed
             fi
         done
     elif command -v kdialog >/dev/null; then
         while true; do
-            selected=$(kdialog --getexistingdirectory "$HOME" --title "Select repo folder (Cancel for defaults)" 2>/dev/null)
-            if [ -n "$selected" ]; then
-                if [ -z "$USER_PATHS" ]; then
-                    USER_PATHS="$selected"
-                else
-                    USER_PATHS="$USER_PATHS,$selected"
+            path_string=""
+            for p in "${user_paths_array[@]}"; do
+                path_string+="• $p\n"
+            done
+            if [ -z "$path_string" ]; then
+                path_string="(None selected, will use defaults)"
+            fi
+            
+            # Kdialog yesnocancel: 0=Yes(Done), 1=No(Add Folder), 2=Cancel(Clear All), other=closed
+            kdialog --yesnocancel "Current Repositories:\n\n$path_string" --yes-label "Done" --no-label "Add Folder..." --cancel-label "Clear All" --title "GitHub Sync Configuration" 2>/dev/null
+            ret=$?
+            
+            if [ $ret -eq 0 ]; then
+                break
+            elif [ $ret -eq 1 ]; then
+                selected=$(kdialog --getexistingdirectory "$HOME" --title "Select a repo folder" 2>/dev/null)
+                if [ -n "$selected" ]; then
+                    user_paths_array+=("$selected")
                 fi
-                
-                kdialog --title "GitHub Sync Configuration" --yesno "Added:\n$selected\n\nWould you like to add another repository folder?" 2>/dev/null
-                if [ $? -ne 0 ]; then
-                    break
-                fi
+            elif [ $ret -eq 2 ]; then
+                user_paths_array=()
             else
                 break
             fi
         done
     else
         read -p "Enter custom repository paths (comma separated) or press Enter for defaults: " USER_PATHS
+    fi
+    
+    # Rebuild USER_PATHS from array for Linux
+    if [ ${#user_paths_array[@]} -gt 0 ]; then
+        USER_PATHS=$(IFS=,; echo "${user_paths_array[*]}")
     fi
 fi
 

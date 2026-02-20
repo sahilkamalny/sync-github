@@ -47,7 +47,7 @@ Ensure you are in the root directory and run:
 
 ## Usage
 
-By default, the script looks for repositories in `~/GitHub`, `~/Scripts`, and `~/Projects`. 
+By default, the script looks for repositories in `~/GitHub`, `~/Projects`, `~/Scripts`, and `~/Repositories`.
 
 **Custom Paths & Configuration:**
 During the 1-click installation sequence, a native desktop popup UI will prompt you to enter any custom repository folder paths. These paths will be securely saved into a configuration file. 
