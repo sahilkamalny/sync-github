@@ -8,7 +8,7 @@ A highly polished, reliable, and OS-aware shell utility to effortlessly synchron
 
 ## Features
 - **Parallel Fetching:** Iterates and pulls repositories concurrently, falling back gracefully if errors occur.
-- **Fail-safe Rebase Protections:** Intelligently runs `git rebase --abort` on background tasks that fail due to merge conflicts or network errors, protecting your repository from being stuck in a dirty state.
+- **Fail-safe Rebase Protections:** Runs `git rebase --abort` on background tasks that fail due to merge conflicts or network errors, protecting your repository from being stuck in a dirty state.
 - **Dynamic System Integrations:** Native Notification alerts, AppleScript/Bash hybrid application wrappers on macOS, and `.desktop` launchers on Linux Desktop.
 - **Interactive Configuration Menus:** Ships with a stateful GUI menu on both macOS and Linux that allows infinite folder selection, multi-directory tracking, and individual folder removal via checkbox lists.
 
