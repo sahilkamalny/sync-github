@@ -23,11 +23,6 @@ echo -e "\033[1;36m  🚀 GitHub Sync Installer\033[0m"
 echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
 
-if [ -f "$HOME/.local/bin/github-sync" ]; then
-    echo -e "    \033[1;33mℹ️  GitHub Sync is already installed. Running updater flow...\033[0m"
-    echo ""
-fi
-
 echo -e "    \033[3mPlease interact with the configuration pop-up...\033[0m"
 echo ""
 
@@ -221,6 +216,12 @@ echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━�
 echo -e "\033[1;36m  🚀 GitHub Sync Installer\033[0m"
 echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
+
+if [ -f "$HOME/.local/bin/github-sync" ]; then
+    echo -e "    \033[1;33mℹ️  GitHub Sync is already installed. Running updater flow...\033[0m"
+    echo ""
+fi
+
 echo -e "    \033[3mConfiguration saved. Preparing your synchronization environment...\033[0m"
 echo ""
 echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
