@@ -257,7 +257,7 @@ echo ""
 chmod +x "$SCRIPT_PATH"
 chmod +x "$REPO_DIR/scripts/install.sh"
 chmod +x "$REPO_DIR/scripts/uninstall.sh"
-echo -e "    \033[1;32m✓\033[0m Core scripts marked as executable"
+echo -e "    \033[1;32m✓\033[0m Core scripts made executable"
 
 if [ -n "$USER_PATHS" ]; then
     echo -e "    \033[1;32m✓\033[0m Saved configuration to \033[4m~/.config/github-sync/config\033[0m"
@@ -302,7 +302,7 @@ EOF
         cp "/System/Applications/Utilities/Terminal.app/Contents/Resources/Terminal.icns" "$APP_DIR/Contents/Resources/applet.icns"
         touch "$APP_DIR"
     fi
-    echo -e "    \033[1;32m✓\033[0m ${ACTION_STR} macOS Application (\033[4mGitHub Sync.app\033[0m)"
+    echo -e "    \033[1;32m✓\033[0m ${ACTION_STR} macOS App (\033[4mGitHub Sync.app\033[0m)"
 
 elif [[ "$OS" == "Linux" ]]; then
     DESKTOP_ENTRY_DIR="$HOME/.local/share/applications"
@@ -344,9 +344,12 @@ if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
 
     if [ -n "$SHELL_RC" ]; then
         echo -e "\nexport PATH=\"\$HOME/.local/bin:\$PATH\"" >> "$SHELL_RC"
-        echo -e "    \033[1;33m⚠️  $LOCAL_BIN was patched into your PATH via \033[4m$(basename "$SHELL_RC")\033[0m"
-        echo -e "       \033[3m(Please restart your terminal or run 'source $SHELL_RC' to apply)\033[0m"
+        echo -e "    \033[1;32m✓\033[0m Configured PATH automatically via \033[4m$(basename "$SHELL_RC")\033[0m"
+        echo -e "      \033[3m(Please restart your terminal or run 'source $SHELL_RC' to apply)\033[0m"
     fi
+    echo ""
+else
+    echo -e "    \033[1;32m✓\033[0m PATH is already configured (\033[4m$LOCAL_BIN\033[0m)"
     echo ""
 fi
 
