@@ -141,6 +141,7 @@ echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━�
 echo -e "\033[1;32m  ✅ Uninstallation Complete.\033[0m"
 echo -e "\033[1;34m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
 echo ""
+echo -e "    GitHub Sync has been successfully removed from your system."
 
 if [[ "$OS" == "Darwin" ]]; then
     osascript -e 'display notification "Uninstallation complete. All configurations and files have been removed." with title "GitHub Sync"'
