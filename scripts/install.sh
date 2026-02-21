@@ -27,6 +27,9 @@ echo -e "    \033[3mPlease interact with the configuration pop-up...\033[0m"
 echo ""
 
 USER_PATHS=""
+if [ -f "$CONFIG_FILE" ]; then
+    USER_PATHS=$(paste -sd ',' "$CONFIG_FILE" 2>/dev/null || echo "")
+fi
 
 HAS_GUI=0
 if [[ "$OS" == "Darwin" ]] && [ -z "$SSH_CLIENT" ] && [ -z "$SSH_TTY" ]; then
@@ -38,8 +41,15 @@ fi
 if [ "$HAS_GUI" -eq 1 ]; then
     if [[ "$OS" == "Darwin" ]]; then
         # macOS native AppleScript stateful menu loop
-    USER_PATHS=$(osascript -e '
-        set userPaths to {}
+        APPLESCRIPT_OPTS=("-e" "set userPaths to {}")
+        if [ -n "$USER_PATHS" ]; then
+            IFS=',' read -ra PATH_ARRAY <<< "$USER_PATHS"
+            for p in "${PATH_ARRAY[@]}"; do
+                APPLESCRIPT_OPTS+=("-e" "set end of userPaths to POSIX path of \"$p\"")
+            done
+        fi
+        
+        USER_PATHS=$(osascript "${APPLESCRIPT_OPTS[@]}" -e '
         repeat
             set pathString to ""
             repeat with p in userPaths
@@ -92,6 +102,13 @@ if [ "$HAS_GUI" -eq 1 ]; then
     elif [[ "$OS" == "Linux" ]]; then
         # Linux GUI native stateful menu loop
         user_paths_array=()
+        if [ -n "$USER_PATHS" ]; then
+            IFS=',' read -ra PATH_ARRAY <<< "$USER_PATHS"
+            for p in "${PATH_ARRAY[@]}"; do
+                user_paths_array+=("$p")
+            done
+        fi
+        
     if command -v zenity >/dev/null; then
         while true; do
             path_string=""
@@ -201,7 +218,14 @@ fi
 fi
 
 if [ "$HAS_GUI" -eq 0 ]; then
-    read -p "    Enter custom repository paths (comma separated) or press Enter for defaults: " USER_PATHS
+    if [ -n "$USER_PATHS" ]; then
+        read -p "    Enter custom repository paths (comma separated) or press Enter to keep current: " input_paths
+        if [ -n "$input_paths" ]; then
+            USER_PATHS="$input_paths"
+        fi
+    else
+        read -p "    Enter custom repository paths (comma separated) or press Enter for defaults: " USER_PATHS
+    fi
 fi
 
 if [ -n "$USER_PATHS" ]; then
