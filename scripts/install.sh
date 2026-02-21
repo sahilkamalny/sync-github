@@ -241,9 +241,6 @@ if [ -n "$USER_PATHS" ]; then
     done
 else
     echo -e "    \033[1;32m✓\033[0m ~/GitHub"
-    echo -e "    \033[1;32m✓\033[0m ~/Projects"
-    echo -e "    \033[1;32m✓\033[0m ~/Scripts"
-    echo -e "    \033[1;32m✓\033[0m ~/Repositories"
     echo ""
     echo -e "    \033[1;30m(Using Default Fallbacks)\033[0m"
 fi

@@ -65,7 +65,7 @@ Once installed, you can trigger the synchronization process anytime by:
 2. Launching **GitHub Sync** from your Linux Desktop application menu.
 3. Typing `github-sync` from any directory in your terminal.
 
-By default, the script looks for repositories in `~/GitHub`, `~/Projects`, `~/Scripts`, and `~/Repositories`.
+By default, the script looks for repositories in `~/GitHub`.
 
 **Custom Paths & Configuration:**
 During the double-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select multiple directories via your OS file-picker. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
