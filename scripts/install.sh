@@ -326,8 +326,6 @@ EOF
     echo -e "    \033[1;32m✓\033[0m ${ACTION_STR} Linux Application (\033[4mgithub-sync.desktop\033[0m)"
 fi
 
-echo ""
-
 if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
     SHELL_RC=""
     if [[ "$SHELL" == *"zsh"* ]]; then
