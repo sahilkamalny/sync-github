@@ -53,7 +53,7 @@ Ensure you are in the root directory and run:
 
 **The installer will automatically:**
 1. Make the core scripts executable.
-2. Link the CLI utility and `ghsync` shorthand to your designated local binaries folder (`~/.local/bin/`).
+2. Link the `github-sync` CLI utility and `ghsync` shorthand to your designated local binaries folder (`~/.local/bin/`).
 3. Safely configure your active shell environment (`~/.zshrc`, `~/.bashrc`, or `~/.bash_profile`) to natively export this folder to your `$PATH`, allowing you to seamlessly invoke the commands globally.
 4. Generate a Spotlight-searchable macOS wrapper (`GitHub Sync.app`) or a launcher `.desktop` shortcut on Linux.
 
