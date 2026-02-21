@@ -55,7 +55,7 @@ if [ "$HAS_GUI" -eq 1 ]; then
             repeat with p in userPaths
                 set pathString to pathString & "• " & p & return
             end repeat
-            if pathString is "" then set pathString to "(None selected. The default paths will be used.)"
+            if pathString is "" then set pathString to "(None selected. Default configuration will be applied.)"
             
             try
                 set theResult to display dialog "Current Repositories:" & return & return & pathString buttons {"Done", "Remove Folder...", "Add Folder..."} default button "Add Folder..." with title "GitHub Sync Configuration"
@@ -116,7 +116,7 @@ if [ "$HAS_GUI" -eq 1 ]; then
                 path_string+="• $p\n"
             done
             if [ -z "$path_string" ]; then
-                path_string="(None selected. The default paths will be used.)"
+                path_string="(None selected. Default configuration will be applied.)"
             fi
             
             action=$(zenity --question --title="GitHub Sync Configuration" --text="<b>Current Repositories:</b>\n\n$path_string" --ok-label="Done" --cancel-label="Add Folder..." --extra-button="Remove Folder..." 2>/dev/null)
@@ -170,7 +170,7 @@ if [ "$HAS_GUI" -eq 1 ]; then
                 path_string+="• $p\n"
             done
             if [ -z "$path_string" ]; then
-                path_string="(None selected. The default paths will be used.)"
+                path_string="(None selected. Default configuration will be applied.)"
             fi
             
             kdialog --yesnocancel "Current Repositories:\n\n$path_string" --yes-label "Done" --no-label "Add Folder..." --cancel-label "Remove Folder..." --title "GitHub Sync Configuration" 2>/dev/null

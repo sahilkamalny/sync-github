@@ -175,7 +175,7 @@ for i in "${!repo_paths[@]}"; do
 done
 
 echo ""
-echo -e "${BLUE}🎉  Repository sync complete.${RESET}\n"
+echo -e "${BLUE}🔄  Repository sync complete.${RESET}\n"
 
 # ---------- Clone Missing Repositories ----------
 if command -v gh >/dev/null 2>&1; then
