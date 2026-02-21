@@ -64,7 +64,7 @@ if [ "$total" -eq 0 ]; then
 fi
 
 # ---------- Header ----------
-echo -e "    ${BLUE}↓  Syncing $total repositories concurrently...${RESET}"
+echo -e "    ${CYAN}↻  Syncing $total repositories concurrently...${RESET}"
 echo ""
 
 # Arrays to track state (Bash 3 compatible)
@@ -420,7 +420,7 @@ if command -v gh >/dev/null 2>&1; then
                 echo -e "\n    ${YELLOW}No repositories cloned.${RESET}\n"
             fi
         else
-            echo -e "\n    ${GREEN}✅ All your remote repositories are already cloned locally.${RESET}\n"
+            echo -e "\n    ${GREEN}✓  All your remote repositories are already cloned locally.${RESET}\n"
         fi
         fi
     fi
