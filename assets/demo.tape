@@ -1,11 +1,11 @@
 Output assets/demo.gif
 
-Set FontSize 18
+Set FontSize 20
 Set Width 1200
 Set Height 800
 Set Padding 40
 Set WindowBar Colorful
-Set Theme "Dracula"
+Set Theme "Catppuccin Macchiato"
 
 Hide
 Type "clear"
@@ -25,7 +25,7 @@ Enter
 Sleep 6s
 
 Type "1, 2"
-Sleep 500ms
+Sleep 501ms
 Enter
 
 Sleep 2s
