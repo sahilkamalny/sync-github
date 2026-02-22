@@ -1,146 +1,172 @@
-# ☯︎ GitHub Sync
+<div align="center">
 
-![macOS](https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white)
-![Linux](https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black)
-![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)
-![Bash](https://img.shields.io/badge/Bash-4EAA25?style=for-the-badge&logo=gnu-bash&logoColor=white)
+# GitHub Sync
+
+**Cross-platform Git repository synchronizer — pull all your repos in parallel with automatic SSH upgrades and native OS integrations.**
+
+[![Bash](https://img.shields.io/badge/Bash-5+-4EAA25?style=flat-square&logo=gnu-bash&logoColor=white)](https://www.gnu.org/software/bash/)
+[![PowerShell](https://img.shields.io/badge/PowerShell-Windows-5391FE?style=flat-square&logo=powershell&logoColor=white)](https://learn.microsoft.com/en-us/powershell/)
+[![macOS](https://img.shields.io/badge/macOS-Supported-000000?style=flat-square&logo=apple&logoColor=white)](https://www.apple.com/macos/)
+[![Linux](https://img.shields.io/badge/Linux-Supported-FCC624?style=flat-square&logo=linux&logoColor=black)](https://kernel.org/)
+[![Windows](https://img.shields.io/badge/Windows-Supported-0078D6?style=flat-square&logo=windows&logoColor=white)](https://www.microsoft.com/windows/)
+
+**Built with** Bash · PowerShell · GitHub CLI · AppleScript
+
+[Portfolio](https://sahilkamal.dev) · [LinkedIn](https://linkedin.com/in/sahilkamalny) · [Contact](mailto:sahilkamal.dev@gmail.com)
+
+</div>
+
+---
 
 <div align="center">
   <img src="assets/demo.gif" alt="GitHub Sync Terminal Recording" width="800">
 </div>
 
+---
 
-Cross-platform Git repository synchronizer with Bash and Powershell backends. Built for macOS, Linux, and Windows.
+## Overview
 
-## Table of Contents
-- [Features](#features)
-- [Prerequisites](#prerequisites)
-  - [Optional: Cloning Missing Repositories](#optional-cloning-missing-repositories)
-  - [SSH Configuration Required](#ssh-configuration-required)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Uninstallation](#uninstallation)
-- [Contributing](#contributing)
-- [License](#license)
+GitHub Sync is a cross-platform CLI utility that iterates over all local Git repositories and pulls them concurrently using Bash and PowerShell backends. It ships with native OS integrations — a Spotlight-searchable `.app` wrapper on macOS, a `.desktop` launcher on Linux, and a `ghsync` terminal alias — so synchronization is always one keystroke or click away. Automatic SSH remote upgrades, fail-safe rebase protections, and an interactive multi-directory configuration menu are included out of the box.
+
+---
 
 ## Features
-- **Parallel Fetching:** Iterates and pulls repositories concurrently, falling back gracefully if errors occur.
-- **Fail-safe Rebase Protections:** Runs `git rebase --abort` on background tasks that fail due to merge conflicts or network errors, protecting your repository from being stuck in a dirty state.
-- **Dynamic System Integrations:** Native Notification alerts, AppleScript/Bash hybrid application wrappers on macOS, and `.desktop` launchers on Linux Desktop.
-- **Interactive Configuration Menus:** Ships with a stateful GUI menu on both macOS and Linux that allows infinite folder selection, multi-directory tracking, and individual folder removal via checkbox lists.
-- **Auto SSH Upgrades:** Dynamically detects and upgrades standard `https://` remotes to `git@github.com:` SSH remotes, bypassing strict token authentication limits and avoiding hardcoded usernames.
-- **Clean, Animated UI:** Provides a beautiful, easy-to-read progress spinner and sequentially resolves concurrent background jobs for a premium terminal experience.
+
+**Parallel Fetching** — Pulls all tracked repositories concurrently, falling back gracefully per-repo if errors occur.
+
+**Fail-Safe Rebase Protection** — Automatically runs `git rebase --abort` on any background job that fails due to merge conflicts or network errors, preventing repositories from being left in a dirty state.
+
+**Auto SSH Upgrades** — Detects `https://` remotes and upgrades them to `git@github.com:` SSH remotes on the fly, bypassing token authentication limits and hardcoded usernames.
+
+**Native OS Integrations** — Generates a Spotlight-searchable macOS `.app` wrapper via AppleScript/Bash and a `.desktop` launcher on Linux desktop environments. Native notification alerts on both platforms.
+
+**Interactive Configuration Menu** — A stateful GUI menu on macOS and Linux for multi-directory tracking, infinite folder selection, and per-folder removal via checkbox lists.
+
+**Animated Terminal UI** — Progress spinner with sequentially resolved concurrent background jobs for a clean terminal experience.
+
+---
 
 ## Prerequisites
+
 - `git`
-- `bash` (or Git Bash for Windows)
+- `bash` (or Git Bash on Windows)
 
-### Optional: Cloning Missing Repositories
-This utility allows you to seamlessly detect and clone repositories you own on GitHub that are missing from your local machine. Because this action taps into your GitHub account directly, it strictly requires the official **GitHub CLI (`gh`)** to be installed and authenticated.
+**Optional — Cloning missing repositories**
 
-1. **Install `gh`:** Follow the [official installation instructions](https://cli.github.com/manual/installation) for your OS (e.g., `brew install gh` on macOS, `sudo apt install gh` on Debian/Ubuntu, or `winget install --id GitHub.cli` on Windows).
-2. **Authenticate:** Open your terminal and run the following command to securely link your machine:
-   
-   ```bash
-   gh auth login
-   ```
-   
-3. Follow the interactive prompts to log in via your web browser. Once finished, this utility will automatically discover your account on its next run and offer a GUI or Terminal prompt to clone any missing repositories!
+To detect and clone GitHub repos not yet on your local machine, the GitHub CLI (`gh`) must be installed and authenticated.
 
-### SSH Configuration Required
+```bash
+# Install (choose your platform)
+brew install gh                              # macOS
+sudo apt install gh                          # Debian / Ubuntu
+winget install --id GitHub.cli              # Windows
+
+# Authenticate
+gh auth login
+```
+
+Once authenticated, GitHub Sync will automatically discover your account on the next run and offer to clone any missing repositories.
+
+**Required — SSH key**
 
 > [!IMPORTANT]
-> Because this utility dynamically upgrades all remotes to secure SSH connections (as noted in Features), **you must have a GitHub SSH Key configured on your machine.**
+> GitHub Sync upgrades all remotes to SSH, so a GitHub SSH key must be configured on your machine.
 
 <details>
-<summary><b>Click to expand SSH Key Setup Instructions</b></summary>
+<summary>SSH key setup instructions</summary>
 <br>
 
-If you do not have an SSH key set up, you can generate one quickly. Open your terminal (or Git Bash on Windows) and run this universal command:
+Generate a key:
 
 ```bash
 ssh-keygen -t ed25519 -C "your_email@example.com"
 ```
 
-Press **Enter** to accept the default file location, and optionally set a secure passphrase.
+Press Enter to accept the default path and optionally set a passphrase. Then copy your public key and add it to GitHub under **Settings → SSH and GPG keys → New SSH key**:
 
-Once generated, you will need to link it to your GitHub account:
-1. Copy your new public key to your clipboard:
-   - **macOS:** `pbcopy < ~/.ssh/id_ed25519.pub`
-   - **Linux:** `cat ~/.ssh/id_ed25519.pub` *(then copy the output)*
-   - **Windows:** `clip < ~/.ssh/id_ed25519.pub`
-2. Go to **Settings > SSH and GPG keys > New SSH key** on GitHub and paste your key. *(See the [official guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) for more details).*
+```bash
+pbcopy < ~/.ssh/id_ed25519.pub   # macOS
+cat ~/.ssh/id_ed25519.pub        # Linux (copy output manually)
+clip < ~/.ssh/id_ed25519.pub     # Windows
+```
 
-*(For advanced troubleshooting or managing the ssh-agent, refer to GitHub's [official SSH generation guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).)*
+See the [official guide for adding an SSH key to GitHub](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/adding-a-new-ssh-key-to-your-github-account) for full details. For troubleshooting or managing the SSH agent, refer to GitHub's [SSH key generation guide](https://docs.github.com/en/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent).
 
 </details>
 
+---
+
 ## Installation
 
-**macOS:**
-Open this folder in your file manager and double-click `macOS-Install.command`.
+| Platform | Method |
+|---|---|
+| macOS | Double-click `macOS-Install.command` |
+| Linux | Double-click `Linux-Install.sh` |
+| Windows | Git Bash / WSL — generic install script (dedicated installer coming soon) |
+| Terminal (any) | `./scripts/install.sh` from the repo root |
 
-**Linux:**
-Open this folder in your file manager and double-click `Linux-Install.sh`.
+The installer will automatically make scripts executable, symlink the `github-sync` CLI and `ghsync` alias to `~/.local/bin/`, configure your active shell's `$PATH`, and generate the macOS `.app` wrapper or Linux `.desktop` launcher.
 
-**Windows:**
-*(Install scripts specific to Windows/PowerShell coming soon. For now, try running the generic install script via Git Bash or WSL).*
-
-**Terminal:**
-Ensure you are in the root directory and run:
-
-```bash
-./scripts/install.sh
-```
-
-> [!NOTE]
-> **The installer will automatically:**
-> 1. Make the core scripts executable.
-> 2. Link the `github-sync` CLI utility and `ghsync` alias to your designated local binaries folder (`~/.local/bin/`).
-> 3. Safely configure your active shell environment (`~/.zshrc`, `~/.bashrc`, or `~/.bash_profile`) to natively export this folder to your `$PATH`, allowing you to seamlessly invoke the commands globally.
-> 4. Generate a Spotlight-searchable macOS wrapper (`GitHub Sync.app`) or a launcher `.desktop` shortcut on Linux.
+---
 
 ## Usage
 
-**Launching the Application:**
-Once installed, you can trigger the synchronization process anytime by:
-1. Searching for **GitHub Sync** via macOS Spotlight Search (or Launchpad).
-2. Launching **GitHub Sync** from your Linux Desktop application menu.
-3. Typing `github-sync` (or the `ghsync` command alias) from any directory in your terminal.
+**Launch**
+
+Once installed, start a sync via any of the following:
+- macOS Spotlight or Launchpad — search **GitHub Sync**
+- Linux application menu — launch **GitHub Sync**
+- Terminal — type `github-sync` or `ghsync` from any directory
 
 By default, the script looks for repositories in `~/GitHub`.
 
-**Headless CLI Mode:**
-If you wish to run the synchronization, installation, or uninstallation scripts in a purely headless Terminal environment (bypassing all graphical Pop-up UIs), simply append the `--cli` (or `--headless`) flag to your command:
+**Headless / CLI mode**
+
+Bypass all graphical prompts (AppleScript, Zenity, kdialog) and fall back to a standard Bash prompt:
 
 ```bash
 ghsync --cli
+# or
+ghsync --headless
 ```
-*This flag optimally bypasses AppleScript, Zenity, and kdialog checks across all operating systems, enforcing a standard generic Bash prompt fallback natively.*
 
-**Custom Paths & Configuration:**
-During the double-click installation sequence, a native desktop popup menu will appear. This menu allows you to browse and select multiple directories via your OS file-picker. You can configure folders from entirely different root drives, and remove tracked items via a native checkbox UI.
+**Custom paths**
 
-Alternatively, you can override configurations on the fly by trailing the parent directories via CLI arguments:
+Pass one or more directories as arguments to override the configured paths on the fly:
 
 ```bash
-ghsync ~/CustomClientCode ~/SecondaryBackupDrive
+ghsync ~/ClientCode ~/SecondaryDrive
 ```
+
+---
 
 ## Uninstallation
 
-To completely remove the CLI link, desktop application, and wipe your repository configurations (`~/.config/github-sync`), you can utilize the provided centralized teardown scripts exactly how you installed the application:
+Removes the CLI symlink, desktop launcher, and configuration at `~/.config/github-sync`.
 
-1. **macOS:** Double-click `macOS-Uninstall.command`
-2. **Linux:** Double-click `Linux-Uninstall.sh`
-3. **Windows:** *(Ensure any custom paths/wrappers are removed via Git Bash or WSL).*
-4. **Terminal:** `./scripts/uninstall.sh`
+| Platform | Method |
+|---|---|
+| macOS | Double-click `macOS-Uninstall.command` |
+| Linux | Double-click `Linux-Uninstall.sh` |
+| Windows | Remove manually via Git Bash or WSL |
+| Terminal (any) | `./scripts/uninstall.sh` |
+
+---
 
 ## Contributing
-Pull requests are welcome! If you find any bugs or have feature requests, feel free to open an issue to improve the project.
+
+Pull requests are welcome. For bugs or feature requests, please open an issue.
+
+---
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-#
+MIT — see [LICENSE](LICENSE) for details.
+
+---
+
+<div align="center">
+
 *© 2026 Sahil Kamal*
+
+</div>
